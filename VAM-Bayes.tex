@@ -1,0 +1,563 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = utf8
+\documentclass[10pt,handout]{beamer}
+
+% Default
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+% % XeLaTeX
+% \usepackage{xltxtra}
+
+% % Fonts
+% \usefonttheme{professionalfonts}
+% \linespread{1.08333}
+% \defaultfontfeatures{Scale=MatchLowercase}
+
+% \setmainfont[Numbers={Uppercase,Proportional}]{Calluna Sans}
+
+% \setsansfont[Numbers={Uppercase,Proportional},Ligatures=TeX]{Calluna Sans}
+
+% \setmonofont[Scale=MatchLowercase]{Inconsolata}
+
+%% Language
+\usepackage[british]{babel}
+% \usepackage{polyglossia}
+% \setmainlanguage[variant=uk]{english}
+\usepackage[english=american]{csquotes}
+
+% \usepackage[sortlocale=auto,authordate,backend=biber,ibidtracker=false]{biblatex-chicago}
+\usepackage[style=authoryear-comp,maxcitenames=2,backend=biber]{biblatex}
+\setlength{\bibitemsep}{0.5ex}
+\setlength{\bibhang}{1em}
+\renewcommand{\bibfont}{\small}
+\defbibheading{bibliography}[\bibname]{\section*{#1}}
+\addbibresource{~/academia/library/main.bib}
+
+%%%% Theme %%%%
+\mode<presentation>
+\setbeamertemplate{frametitle}[default][left]
+\useinnertheme{default}
+\setbeamertemplate{blocks}[rounded]
+\setbeamertemplate{footline}[frame number]
+\setbeamercovered{invisible}
+% \setbeamerfont{block title}{\small}
+% \setbeamertemplate{block begin}{\small\insertblocktitle}
+
+\setbeamertemplate{section in toc}{%
+\leavevmode\leftskip=1ex%
+\inserttocsectionnumber.%
+\leavevmode\kern1ex%
+\inserttocsection\par%
+\kern5pt%
+}
+
+\setbeamertemplate{subsection in toc}{%
+\leavevmode\leftskip=5ex%
+  {\usebeamercolor[fg]{structure}\textbullet}\protect\protect\hspace{1.5ex}%
+  \inserttocsubsection\par%
+\kern2pt%
+}
+
+\defbeamertemplate{subsection in toc}{triangle}
+{\leavevmode\leftskip=6ex%
+  \llap{\scriptsize\raise1.25pt\hbox{\donotcoloroutermaths\usebeamercolor[fg]{structure}$\blacktriangleright$}}\protect\protect\hspace{1ex}%
+  \inserttocsubsection\par%
+}
+
+\defbeamertemplate{subsection in toc}{bullet}
+{\leavevmode\leftskip=5ex%
+  {\usebeamercolor[fg]{structure}\textbullet}\protect\protect\hspace{1.5ex}%
+  \inserttocsubsection\par%
+}
+
+
+\setbeamertemplate{itemize item}{\textbullet}
+\setbeamersize{description width=1em}  % small default left indent for description list
+\setlength{\leftmargini}{0pt}
+\setlength{\leftmarginii}{1.2em}
+% \setlength{\itemindent}{0em}
+% \setbeamertemplate{description item}{\color{red}\insertdescriptionitem}
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\beamer@sectionintoc}
+  {\vfill}
+  {\vskip\itemsep}
+  {}
+  {}
+\makeatother
+
+
+% Additional formatting
+\beamertemplatenavigationsymbolsempty
+\definecolor{myorange}{HTML}{f4cf3a}
+\setbeamercolor{alerted text}{fg=myorange}
+
+
+% Metadata
+\title{A Brief Introduction to Bayesian Statistics}
+% \subtitle{}
+\author{Christian Mueller}
+\date{Very Applied Methods MT 2019}
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+\end{frame}
+
+\begin{frame}[plain,noframenumbering]
+  \frametitle{Contents}
+  \tableofcontents
+\end{frame}
+
+\begin{frame}[c]{How to Bayes?}
+
+  \begin{block}{Statistical Framework:}
+    \begin{itemize}
+      \item Subjective Probability
+      \item Likelihood Principle
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Bayes' Theorem:}
+  \[
+    {\color{red}P(\theta\, |\, y)} \propto {\color{orange}P(y\, |\, \theta)} \cdot {\color{blue}P(\theta )}
+  \]
+
+  The \textcolor{red}{posterior} is proportional to the \textcolor{orange}{likelihood} times the \textcolor{blue}{prior}.
+  % \begin{itemize}
+    %   \item Prior
+    %   \item Likelihood
+    %   \item Posterior
+    % \end{itemize}
+  \end{block}
+
+  \begin{block}{Sampling:}
+    \begin{itemize}
+      \item Monte Carlo Principle
+      \item Markov Chain Monte Carlo (MCMC)
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\section{Theory}%
+\label{sec:from_maximum_likelihood_to_bayesian}
+
+\begin{frame}[t]{Statistical Framework}
+
+  This is arguably a philosophical debate about the \enquote{right} way to do statistical inference.
+
+  \begin{block}{Bayesian Probablity}
+    The probability for event \textbf{A} is the \textbf{degree of belief} for the event to happen.
+  \end{block}
+
+  \begin{block}{Likelihood Principle}
+    The Likelihood Principle \textcite{BW1988} states that all
+relevant for inference about a parameter comes through the likelihood
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[c]{Bayesian vs. Frequentist Statistics}
+
+  Scrapped because of time :(
+
+  \vspace{3em}
+
+  See Jeff Gill: Bayesian Methods, page 64.
+
+\end{frame}
+
+
+
+
+
+\begin{frame}[t]{Bayesian Mantra}
+
+  \enquote{Inverting} conditional probability for events \textbf{A} and \textbf{B}:
+
+  \[
+    P(A\, |\, B) = \frac{P(A) \cdot P(B\, |\, A)}{P(B)}
+  \]
+
+  Conditional probability for random variables
+
+  \[
+    P(\mathbf{\theta}\, |\, \mathbf{D}) = \frac{P(\theta ) \cdot P(\mathbf{D}\, |\, \theta)}{P(\mathbf{D})}
+  \]
+
+  $P(data)$ can be interpreted as a standardizing factor which ensure that the probability is well-defined, i.e. sums to 1.
+
+  \begin{block}{Bayesian Mantra}
+
+  \[
+    P(\theta\, |\, \text{data}) \propto P(\theta ) \cdot P(\text{data}\, |\, \theta)
+  \]
+
+  \begin{quote}
+    The posterior is proportional to the prior times the likelihood.
+  \end{quote}
+
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[t]{Example: Estimating a simple linear regression}
+
+  $$Y = \alpha + \beta \cdot X + \epsilon , \quad\text{with}\;\; \epsilon \sim \mathcal{N}(0, \sigma )$$
+
+  $$Y = \mathcal{N}(\alpha + \beta \cdot X, \sigma)$$
+
+  $$P\left(\alpha , \beta , \sigma\, |\, Y, X\right) = \frac{P(\alpha ) \cdot P\left(\beta \right) \cdot P\left(\sigma \right) \cdot P\left(Y\, |\, \alpha , \beta , \sigma , X\right)}{P\left(Y, X\right)}$$
+
+  \vspace{3em}
+
+  \[
+    {\color{red}P\left(\alpha , \beta , \sigma\, |\, Y, X \right)} 
+    \propto 
+    {\color{orange}P\left(Y\, |\, \alpha , \beta , \sigma , X\right)}
+    \cdot
+    {\color{blue}P(\alpha ) \cdot P\left(\beta \right) \cdot P\left(\sigma \right) } 
+  \]
+  
+  \vspace{1em}
+
+  The \textcolor{red}{posterior} is proportional to the \textcolor{orange}{likelihood} times the \textcolor{blue}{prior}.
+
+  % $$P(Y\, |\, \alpha , \beta , X) = \mathcal{N}(XXX) $$
+
+  % Likelihood: $$P(Y\, |\, \alpha , \beta , X) = \prod_{i=1}^n P(Y = y_i \, |\, \mathcal{N}(\mu = \alpha + \beta \cdot X_i, \sigma = \sigma )) $$
+
+  % Log-likelihood:
+  % $$\mathcal{LL} = \sum_{i=1}^n Y -  \mathcal{N}(XXX) $$
+
+\end{frame}
+
+\begin{frame}[t]{Inference}
+
+  \begin{itemize}
+    \item  We defined this beautiful multi-variate posterior distribution which comprises everything we know about the parameters (given prior and data).
+
+  $$
+  P\left(\alpha , \beta , \sigma \right)
+  $$
+
+\item 
+  What we are actually interested in are the marginal distribution of each parameter:
+
+  $$
+  P\left(\alpha \, |\, \beta , \sigma\right)
+  \quad
+  P\left(\beta \, |\, \alpha , \sigma\right)
+  \quad
+  P\left(\sigma \, |\, \alpha , \beta\right)
+  $$
+
+    \item For the marginal distribution of one parameter, you need to integrate all the other variables out.
+    \item Analytically this is very hard in the general case.
+    \item Choosing conjugate prior distributions can help alleviate this because it is easier to analytically compute the marginal distribution.
+    \item \textbf{Sampling to the rescue!}
+  \end{itemize}
+
+\end{frame}
+
+\section{Sampling}%
+\label{sec:sampling}
+
+% \begin{frame}[t]{Sampling Overview}
+%   \begin{itemize}
+%     \item We defined this beautiful multi-variate posterior distribution which comprises everything we know about the parameters (given prior and data).
+%     \item Problem: How do we make inferences for our parameters?
+%     \item We are interested in the marginal distribution of the parameters in the posterior
+%     \item Analytically this is very hard in the general case.
+%       \[
+%         xxx
+%       \]
+%     \item Choosing conjugate prior distributions can 
+
+%     \item Sampling to the rescue!
+%     \item Two components: 1. Creating random samples from an unkown univariate probability distribution. 2. Moving through all the parameters such we get a multivariate probability.
+
+%   \end{itemize}
+% \end{frame}
+
+\begin{frame}[t]{MC, MC, and MCMC}
+
+  \begin{block}{Monte Carlo Principle}
+   We can learn everything we want to know about a distribution by generating a lot of random samples from it.
+  \end{block}
+
+  \begin{block}{Markov Chains}
+    Mathematical tools to model how a system moves from one state to another state, where the new state depends on the previous state.
+  \end{block}
+
+  \begin{block}{MCMC}
+    \begin{itemize}
+      \item A system that describes how you iterate from one sample to the next (Markov chains) and take random samples in each iteration (Monte Carlo Principle) where the current random sample only depends on the previous random sample.
+      \item The Markov chain framework is used to (mathematically) prove that MCMC will converge to the true distribution as  (under certain conditions).
+    \end{itemize}
+  \end{block}
+
+
+\end{frame}
+
+\begin{frame}[t]{MCMC: Algorithms}
+
+  \begin{block}{Sampling a single variable}
+    \begin{itemize}
+      \item Requirement: You need to be able to evaluate the density function
+      \item Algorithm: (Adaptive) Rejection Sampling
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Gibbs' Sampling}
+     \begin{itemize}
+       \item Move through the sampling space by sampling a single variable by conditioning on the previous values of all other variables.
+       \item This corresponds to a multivariate random sample for each full iteration!
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Other algorithms}
+    \begin{itemize}
+      \item Metropolis-Hastings
+      \item Slice sampling
+      \item Hamiltonian Monte Carlo
+    \end{itemize}
+    
+  \end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[t]{Convergence diagnostics}
+
+  \begin{itemize}
+    \item The sampling algorithm needs to be stopped at some time $t_0 < \infty$
+    \item Did the algorithm run \enquote{long enough} to explore the whole space of the posterior distribution?
+    \end{itemize}
+
+      \begin{block}{Methods}
+  \begin{itemize}
+    \item Visual: Traceplot
+      \item Test: Geweke
+      \item Test: Heidelberger-Welch
+      \item Test: Potential scale reduction factor (Gelman and Rubin)
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Caveat}
+      You cannot test for \textbf{convergence}. All tests are for \textbf{non-convergence}.
+  \end{block}
+
+
+\end{frame}
+
+\begin{frame}[c]{R Example: Bayesian simple linear regression}
+    $$Y = \alpha + \beta \cdot X + \epsilon , \quad\text{with}\;\; \epsilon \sim \mathcal{N}(0, \sigma )$$
+
+  $$Y = \mathcal{N}(\alpha + \beta \cdot X, \sigma)$$
+
+  $$P\left(\alpha , \beta , \sigma\, |\, Y, X\right) = \frac{P(\alpha ) \cdot P\left(\beta \right) \cdot P\left(\sigma \right) \cdot P\left(Y\, |\, \alpha , \beta , \sigma , X\right)}{P\left(Y, X\right)}$$
+\end{frame}
+
+\section{Priors}%
+\label{sec:convergence}
+
+\begin{frame}[t]{Choosing Priors}
+
+  General rule: The more information in the likelihood, the less influential the prior.
+
+  \begin{block}{Distribution}
+  \begin{itemize}
+    \item The distribution is often already \enquote{fixed} by \dots
+    \item[\dots] the implementation.
+    \item[\dots] prior research or standard models.
+    \item[\dots] mathematical tractability (conjugacy).
+    % \item Things to look out for when you choose this on your own \dots
+    % \item[\dots] support: The prior needs to support the whole range of possible posterior values.
+    % \item[\dots] parametrization: How flexibly can the distribution be parametrized?
+  \end{itemize}
+  \end{block}
+
+  \begin{block}{Mean and variance}
+  \begin{itemize}
+    \item This is the part where you have to make all the decisions as a researcher.
+    \item You often want to choose some kind of uninformative prior.
+    \item The \textbf{mean} is usually set to 0 (in the case of parameters).
+    \item The \textbf{variance} is usually set to be large.
+    \item However, it does not need to be \textit{extremely} large.
+  \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[c]{R Example: Informative and uninformative priors}
+
+  \begin{block}{Go back to the simple linear regression example.}
+    
+  \end{block}
+  \begin{itemize}
+    \item Play around with the prior variance.
+    \item Play around with the prior mean.
+    \item See how much information you need to give into the priors to sway the posterior distribution.
+    \item Reduce the sample size of the data and compare again.
+  \end{itemize}
+  
+\end{frame}
+
+
+
+
+
+\begin{frame}[t]{Controversies around Bayesian statistics}
+
+  \begin{itemize}
+    \item Philosophical differences around what constitutes a probability.
+    \item You have to make full parametric assumptions for priors and likelihood.
+    \item You can estimate fundamentally non-identified models!
+    \item You can inject information through the priors which will influence the posterior
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[c]{R Code: Fundamentally unidentified model}
+
+  Let $Y \sim \mathcal{N}\left(\mu_0, \sigma_0\right)$ be the true data generating process.
+
+  \vspace{1em}
+
+  \vspace{1em}
+
+  Estimate a model:
+
+  $$
+  Y \sim \mathcal{N}\left(\hat\mu_1 + \hat\mu_2, \hat\sigma\right)
+  $$
+
+  {\color{red}$\hat\mu_1$ and $\hat\mu_2$ are not identified!}
+
+  \vspace{1em}
+
+  Estimates for $\hat\mu_1$ and $\hat\mu_2$ can be any values as long as $\hat\mu_0 = \hat\mu_1 + \hat\mu_2$ is satisfied.
+
+  \vspace{1em}
+
+  $\hat\mu_1$ and $\hat\mu_2$ can be estimated in a Bayesian framework and $\hat\mu_1 + \hat\mu_2$ will be an estimate for $\mu_0$!
+
+\end{frame}
+
+
+\section{Summary}%
+\label{sec:my_personal_take}
+
+\begin{frame}[t]{Why Bayes?}
+
+  \begin{itemize}[<+->]
+    \item The likelihood is central to all parametric statistical inference, e.g. MLE.
+    \item The more complicated the model becomes, the harder it becomes to maximise the likelihood function to estimate parameters.
+    \item Bayesian estimation will not magically resolve those issues!
+    \item BUT it allows you to \dots
+  \item[\dots{}] replace the problem of finding a maximum with the problem of sampling from the posterior: \\
+    % Sampling from the posterior is \textit{guaranteed} to give you the correct estimates at convergence (as n samples $\to$ $\infty$).
+  \item[\dots{}] \enquote{identify} a model by injecting a small amount information into the model, often to constrain the posterior variance of the parameters to a \enquote{sensible} range.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[t]{Why Bayes? (cont'd)}
+
+  \begin{itemize}
+    \item Some statistical models lend themselves to Bayesian estimation because they easily translated from their specification, e.g. multilevel/hierarchical models
+    \item For certain research questions you can only observe a limited amount of data to infer a complicated (hidden) theoretical process:
+    \item Example IRT (Factor analysis): You estimate $\theta$ for each individual and $\alpha$ and $\beta$ for each item.
+    \item You cannot add additional data (individuals/items) without increasing the number of estimated parameters!
+    \item Bayesian estimation allows you to make inferences about the hidden process in the absence of an overwhelming amount of information.
+    \item You \textit{buy} this possibility with more assumptions about the prior distribution of model parameters.
+
+    \item Other examples: Exponential Random Graph Models for networks or topic models for text.
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[c]{}
+  
+  \Huge That's it!
+
+\end{frame}
+
+\section{Further topics}%
+\label{sec:further_topics}
+
+
+\begin{frame}[t]{Alternatives to sampling}
+
+  Sampling has the favourable property that it is \textit{guaranteed} to converge to the true posterior distribution as $n_{\text{samples}} \to \infty$.
+
+  Alternatives have been developed with the main idea to change sampling (back) to an optimisation problem.
+
+  \begin{itemize}
+    \item MAP
+    \item Collapsed sampling
+    \item EM and Variational Inference
+  \end{itemize}
+
+  All methods share one important drawback:
+
+  \begin{itemize}
+    \item You get sensible estimates for the posterior mean (expected value)
+    \item You usually \textbf{do not} get sensible estimates for the posterior variance
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[t]{Alternatives to sampling: Variational Inference}
+
+  \begin{itemize}
+    \item Idea: Approximate the true distribution by a distribution that is easier to work with but \enquote{close} to the true distribution.
+    \item Propose a target distribution from a family of distributions close to the actual one
+    \item Minimise the (KL-) difference between the two distributions.
+    \item Main advantage (compared to MCMC): Potentially very fast!
+    \item Main downsides (compared to MCMC):
+      \begin{itemize}
+        \item The approximation \textbf{underestimates} (usually by a large degree) the variation of the true distribution.
+        \item Writing a VI algorithm is complicated and specific to the model and priors.
+        \item The properties of variational approximation are not well studied.
+      \end{itemize}
+    \item See here for a \enquote{gentle} introduction: \textcite{BKM2017}
+    \item VI is used in many advanced models with large scale data, e.g. topic modelling
+  \end{itemize}
+
+\end{frame}
+
+% \begin{frame}[t]{Take-home points}
+
+%   \begin{itemize}
+%     \item abc
+%     \item You have to make assumptions about the prior distribution of parameters. There are no truly uninformative priors. (This is up for debate.)
+%     \item To 
+%   \end{itemize}
+
+% \end{frame}
+
+\begin{frame}[t]{References}
+  \tiny
+  \printbibliography
+\end{frame}
+
+% \section*{Appendix}
+% \label{sec:appendix}
+
+% \begin{frame}[t,noframenumbering]{}
+%   \hfill\hyperlink{}{\beamerreturnbutton{RQ 1 \& 2}}
+% \end{frame}
+
+\end{document}
